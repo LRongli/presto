@@ -96,9 +96,14 @@ public class StructStreamReader
         Block[] blocks = new Block[typeParameters.size()];
         if (presentStream == null) {
             for (int i = 0; i < typeParameters.size(); i++) {
-                StreamReader structField = structFields[i];
-                structField.prepareNextRead(nextBatchSize);
-                blocks[i] = structField.readBlock(typeParameters.get(i));
+                if (i < structFields.length) {
+                    StreamReader structField = structFields[i];
+                    structField.prepareNextRead(nextBatchSize);
+                    blocks[i] = structField.readBlock(typeParameters.get(i));
+                }
+                else {
+                    blocks[i] = typeParameters.get(i).createBlockBuilder(null, 0).appendNull().build();
+                }
             }
         }
         else {
